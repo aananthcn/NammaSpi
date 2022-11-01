@@ -59,6 +59,10 @@ typedef uint16 Spi_NumberOfDataType;
 /* Each Channel shall have an associated index which is used for
    specifying the order of the Channel within the Job */
 typedef uint8 Spi_ChannelType;
+#define SPI_CHAN_TYPE_IB        1
+#define SPI_CHAN_TYPE_EB        2
+#define SPI_CHAN_TYPE_IB_EB     3
+
 
 typedef uint8 Spi_HWUnitType;
 
