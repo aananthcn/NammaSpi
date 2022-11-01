@@ -49,7 +49,7 @@ typedef enum {
 
 
 typedef struct {
-    SpiExtDevID_Type spi_hw_unit;
+    SpiExtDevID_Type spi_hw_unit_id;
     uint32 spi_baudrate;
     SpiDataShiftEdgeType spi_data_shift_edge;
     SpiLevelType spi_shftclk_idle_level;
@@ -99,10 +99,19 @@ typedef struct {
 } SpiSequenceCfgType;
 
 
+
 #define SPI_DRIVER_MAX_CHANNEL   (3)
 #define SPI_DRIVER_MAX_JOB       (2)
 #define SPI_DRIVER_MAX_SEQUENCE  (2)
 #define SPI_DRIVER_MAX_HW_UNIT   (1)
+
+typedef struct {
+    SpiGeneralCfgType general;
+    SpiExternalDeviceType devices[SPI_DRIVER_MAX_HW_UNIT];
+    SpiChannelCfgType channels[SPI_DRIVER_MAX_CHANNEL];
+    SpiJobCfgType jobs[SPI_DRIVER_MAX_JOB];
+    SpiSequenceCfgType sequences[SPI_DRIVER_MAX_SEQUENCE];
+} Spi_ConfigType;
 
 
 #endif

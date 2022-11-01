@@ -16,3 +16,63 @@ SpiGeneralCfgType SpiGeneralCfg = {
 	.spi_main_func_period_ms = 10
 };
 
+
+SpiExternalDeviceType SpiExternalDeviceCfg[] = {
+	{
+		.spi_hw_unit_id = SPI_EXT_DEV_CSIB0,
+		.spi_baudrate = 1000000, /* bps or Hz */
+		.spi_data_shift_edge = SPI_EDGE_LEADING,
+		.spi_shftclk_idle_level = SPI_LEVEL_LOW,
+		.spi_enable_cs = FALSE,
+		.spi_cs_id = "CS_Ethernet",
+		.spi_cs_selection = CS_VIA_PERIPHERAL_ENGINE,
+		.spi_cs_polarity = SPI_LEVEL_LOW,
+		.spi_usec_clk_2_cs = 0,
+		.spi_usec_cs_2_clk = 1,
+		.spi_usec_cs_2_cs = 1
+	}
+};
+
+
+uint8 SpiDefaultData_0[] = {
+	0xAA, 0x55, 0x12, 0x34, 
+};
+
+uint8 SpiDefaultData_1[] = {
+	0xAA, 0x55, 0x12, 0x34, 
+};
+
+uint8 SpiDefaultData_2[] = {
+	0xAA, 0x55, 0x12, 0x34, 
+};
+
+SpiChannelCfgType SpiChannelCfg[] = {
+	{
+		.spi_chan_id = 0,
+		.spi_chan_type = SPI_CHAN_TYPE_IB,
+		.spi_data_width = 4,
+		.spi_default_data = SpiDefaultData_0,
+		.spi_eb_max_len = 0,
+		.spi_ib_num_buf = 65535,
+		.spi_tx_start = SPI_TX_START_MSB
+	},
+	{
+		.spi_chan_id = 1,
+		.spi_chan_type = SPI_CHAN_TYPE_IB,
+		.spi_data_width = 4,
+		.spi_default_data = SpiDefaultData_1,
+		.spi_eb_max_len = 0,
+		.spi_ib_num_buf = 65535,
+		.spi_tx_start = SPI_TX_START_MSB
+	},
+	{
+		.spi_chan_id = 2,
+		.spi_chan_type = SPI_CHAN_TYPE_IB,
+		.spi_data_width = 4,
+		.spi_default_data = SpiDefaultData_2,
+		.spi_eb_max_len = 0,
+		.spi_ib_num_buf = 65535,
+		.spi_tx_start = SPI_TX_START_MSB
+	}
+};
+
