@@ -101,7 +101,7 @@ typedef struct {
 
 
 #define SPI_DRIVER_MAX_CHANNEL   (3)
-#define SPI_DRIVER_MAX_JOB       (2)
+#define SPI_DRIVER_MAX_JOB       (3)
 #define SPI_DRIVER_MAX_SEQUENCE  (2)
 #define SPI_DRIVER_MAX_HW_UNIT   (1)
 

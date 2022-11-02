@@ -86,6 +86,10 @@ uint16 SpiChannelList_1[] = {
 	1, 
 };
 
+uint16 SpiChannelList_2[] = {
+	2, 
+};
+
 SpiJobCfgType SpiJobCfg[] = {
 	{
 		.spi_job_id = 0,
@@ -96,10 +100,43 @@ SpiJobCfgType SpiJobCfg[] = {
 	},
 	{
 		.spi_job_id = 1,
-		.spi_job_priority = 0,
+		.spi_job_priority = 1,
 		.job_end_notification_fn = NULL,
 		.spi_chan_list_size = 1,
 		.spi_chan_list = SpiChannelList_1,
+	},
+	{
+		.spi_job_id = 2,
+		.spi_job_priority = 3,
+		.job_end_notification_fn = NULL,
+		.spi_chan_list_size = 1,
+		.spi_chan_list = SpiChannelList_2,
+	}
+};
+
+
+uint16 SpiJobAssignment_0[] = {
+	0, 
+};
+
+uint16 SpiJobAssignment_1[] = {
+	1, 2, 
+};
+
+SpiSequenceCfgType SpiSequenceCfg[] = {
+	{
+		.spi_seq_id = 0,
+		.spi_seq_interruptible = FALSE,
+		.seq_end_notification_fn = NULL,
+		.spi_job_list_size = 1,
+		.spi_job_list = SpiJobAssignment_0,
+	},
+	{
+		.spi_seq_id = 1,
+		.spi_seq_interruptible = FALSE,
+		.seq_end_notification_fn = NULL,
+		.spi_job_list_size = 2,
+		.spi_job_list = SpiJobAssignment_1,
 	}
 };
 
