@@ -1,3 +1,4 @@
+#include <stddef.h>
 #include <Spi_cfg.h>
 
 
@@ -35,11 +36,11 @@ SpiExternalDeviceType SpiExternalDeviceCfg[] = {
 
 
 uint8 SpiDefaultData_0[] = {
-	0xAA, 0x55, 0x12, 0x34, 
+	0xAA, 0x55, 0x12, 0x34, 0x45, 0x8a, 0x45, 0xb3, 0x87, 0x61, 0x90, 
 };
 
 uint8 SpiDefaultData_1[] = {
-	0xAA, 0x55, 0x12, 0x34, 
+	12, 34, 56, 78, 90, 
 };
 
 uint8 SpiDefaultData_2[] = {
@@ -73,6 +74,32 @@ SpiChannelCfgType SpiChannelCfg[] = {
 		.spi_eb_max_len = 0,
 		.spi_ib_num_buf = 65535,
 		.spi_tx_start = SPI_TX_START_MSB
+	}
+};
+
+
+uint16 SpiChannelList_0[] = {
+	0, 2, 
+};
+
+uint16 SpiChannelList_1[] = {
+	1, 
+};
+
+SpiJobCfgType SpiJobCfg[] = {
+	{
+		.spi_job_id = 0,
+		.spi_job_priority = 0,
+		.job_end_notification_fn = NULL,
+		.spi_chan_list_size = 2,
+		.spi_chan_list = SpiChannelList_0,
+	},
+	{
+		.spi_job_id = 1,
+		.spi_job_priority = 0,
+		.job_end_notification_fn = NULL,
+		.spi_chan_list_size = 1,
+		.spi_chan_list = SpiChannelList_1,
 	}
 };
 
