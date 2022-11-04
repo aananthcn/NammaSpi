@@ -74,8 +74,11 @@ typedef struct {
     uint8 spi_chan_type;
     uint16 spi_data_width;
     const uint8* spi_default_data;
+    uint16 spi_default_data_len;
     uint16 spi_eb_max_len;
     uint16 spi_ib_num_buf;
+    uint32 spi_ch_buf_len; /* in bytes, either EB or IB */
+    uint8* spi_ib_buf_ptr;
     SpiTransferStartType spi_tx_start;
 } SpiChannelCfgType;
 
@@ -101,8 +104,8 @@ typedef struct {
 
 
 #define SPI_DRIVER_MAX_CHANNEL   (3)
-#define SPI_DRIVER_MAX_JOB       (3)
-#define SPI_DRIVER_MAX_SEQUENCE  (2)
+#define SPI_DRIVER_MAX_JOB       (1)
+#define SPI_DRIVER_MAX_SEQUENCE  (1)
 #define SPI_DRIVER_MAX_HW_UNIT   (1)
 
 typedef struct {
@@ -112,6 +115,13 @@ typedef struct {
     const SpiJobCfgType* jobs[SPI_DRIVER_MAX_JOB];
     const SpiSequenceCfgType* sequences[SPI_DRIVER_MAX_SEQUENCE];
 } Spi_ConfigType;
+
+
+extern const SpiGeneralCfgType SpiGeneralCfg;
+extern const SpiExternalDeviceType SpiExternalDeviceCfg[SPI_DRIVER_MAX_HW_UNIT];
+extern const SpiChannelCfgType SpiChannelCfg[SPI_DRIVER_MAX_CHANNEL];
+extern const SpiJobCfgType SpiJobCfg[SPI_DRIVER_MAX_JOB];
+extern const SpiSequenceCfgType SpiSequenceCfg[SPI_DRIVER_MAX_SEQUENCE];
 
 
 #endif

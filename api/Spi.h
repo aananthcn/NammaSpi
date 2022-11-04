@@ -24,6 +24,7 @@
 
 #include <Spi_cfg.h> // auto-generated file, contains structre & macros related to Spi_ConfigType
 #include <Platform_Types.h>
+#include <Std_Types.h>
 #include <Spi_cfg.h>
 
 
