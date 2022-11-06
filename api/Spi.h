@@ -67,7 +67,8 @@ typedef uint8 Spi_HWUnitType;
 
 typedef enum {
         SPI_POLLING_MODE,
-        SPI_INTERRUPT_MODE
+        SPI_INTERRUPT_MODE,
+        SPI_MODE_MAX
 } Spi_AsyncModeType;
 
 
@@ -93,7 +94,7 @@ Std_ReturnType Spi_SyncTransmit(Spi_SequenceType Sequence);
 
 Spi_StatusType Spi_GetStatus(void);
 Spi_JobResultType Spi_GetJobResult(Spi_JobType Job);
-Spi_SeqResultType Spi_GetSequenceResult (Spi_SequenceType Sequence);
+Spi_SeqResultType Spi_GetSequenceResult(Spi_SequenceType Sequence);
 void Spi_GetVersionInfo(Std_VersionInfoType* versioninfo);
 
 
