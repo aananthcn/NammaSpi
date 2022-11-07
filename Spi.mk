@@ -12,5 +12,6 @@ $(info compiling Spi source files)
 
 SPI_OBJS := \
 	${SPI_PATH}/src/Spi.o \
-	${SPI_PATH}/cfg/Spi_cfg.o
+	${SPI_PATH}/cfg/Spi_cfg.o \
+	${SPI_PATH}/src/SchM_Spi.o
 

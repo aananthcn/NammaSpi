@@ -78,35 +78,15 @@ Std_ReturnType Spi_WriteIB(Spi_ChannelType Channel, const Spi_DataBufferType* Da
 	if (DataBufferPtr == NULL) {
 		/* Copy the default data to buffer if incoming data pointer is NULL */
 		for (i = 0; i < SpiChannelCfg[Channel].spi_default_data_len; i++) {
-			SpiChannelCfg[Channel].spi_ib_buf_ptr[i] = SpiChannelCfg[Channel].spi_default_data[i];
+			SpiChannelCfg[Channel].spi_ib_buf_s_ptr[i] = SpiChannelCfg[Channel].spi_default_data[i];
 		}
 	}
 	else {
 		/* Here the complete buffer is copied irrespective of real length of the message */
 		for (i = 0; i < SpiChannelCfg[Channel].spi_ib_buf_len; i++) {
-			SpiChannelCfg[Channel].spi_ib_buf_ptr[i] = DataBufferPtr[i];
+			SpiChannelCfg[Channel].spi_ib_buf_s_ptr[i] = DataBufferPtr[i];
 		}
 	}
-
-	return E_OK;
-}
-
-
-/* Service to transmit data on the SPI bus */
-Std_ReturnType Spi_AsyncTransmit(Spi_SequenceType Sequence) {
-	if (Sequence > SPI_DRIVER_MAX_SEQUENCE) {
-		return E_NOT_OK;
-	}
-
-	if (Spi_SeqResult[Sequence] == SPI_SEQ_PENDING) {
-		return E_NOT_OK;
-	}
-
-	// call board specific function to initiate a transfer
-
-	Spi_State = SPI_BUSY;
-	Spi_SeqResult[Sequence] = SPI_SEQ_PENDING;
-	// Spi_JobResult[??] = SPI_JOB_QUEUED;
 
 	return E_OK;
 }
@@ -127,7 +107,7 @@ Std_ReturnType Spi_ReadIB(Spi_ChannelType Channel, Spi_DataBufferType* DataBuffe
 
 	/* Here the complete buffer is copied irrespective of real length of the message */
 	for (i = 0; i < SpiChannelCfg[Channel].spi_ib_buf_len; i++) {
-		DataBufferPointer[i] = SpiChannelCfg[Channel].spi_ib_buf_ptr[i];
+		DataBufferPointer[i] = SpiChannelCfg[Channel].spi_ib_buf_d_ptr[i];
 	}
 
 	return E_OK;
@@ -192,16 +172,6 @@ void Spi_GetVersionInfo(Std_VersionInfoType* versioninfo) {
 }
 
 
-/* Service to transmit data on the SPI bus */
-Std_ReturnType Spi_SyncTransmit(Spi_SequenceType Sequence) {
-	if (Sequence >= SPI_DRIVER_MAX_SEQUENCE) {
-		return SPI_SEQ_FAILED;
-	}
-
-	return E_OK;
-}
-
-
 Spi_StatusType Spi_GetHWUnitStatus(Spi_HWUnitType HWUnit) {
 	if (HWUnit >= SPI_DRIVER_MAX_HW_UNIT) {
 		return SPI_UNINIT;
@@ -230,3 +200,106 @@ Std_ReturnType Spi_SetAsyncMode(Spi_AsyncModeType Mode) {
 	Spi_Mode = Mode;
 	return E_OK;
 }
+
+
+// move this function
+Std_ReturnType Spi_SyncTransmit_Channel(Spi_ChannelType ch_id, SpiExtDevID_Type hwdev) {
+	int i;
+	uint8 *src_ptr, *dst_ptr;
+	uint16 buf_len;
+
+	if (ch_id >= SPI_DRIVER_MAX_CHANNEL) {
+		return E_NOT_OK;
+	}
+
+	if (hwdev >= SPI_DRIVER_MAX_HW_UNIT) {
+		return E_NOT_OK;
+	}
+
+	// find out source and destination pointer
+	if (SpiChannelCfg[ch_id].spi_chan_type == SPI_CHAN_TYPE_IB) {
+		src_ptr = SpiChannelCfg[ch_id].spi_ib_buf_s_ptr;
+		dst_ptr = SpiChannelCfg[ch_id].spi_ib_buf_d_ptr;
+		buf_len = SpiChannelCfg[ch_id].spi_ib_buf_len;
+	}
+	else {
+		src_ptr = *SpiChannelCfg[ch_id].spi_eb_buf_s_ptr;
+		dst_ptr = *SpiChannelCfg[ch_id].spi_eb_buf_d_ptr;
+		buf_len = *SpiChannelCfg[ch_id].spi_eb_buf_l_ptr;
+	}
+
+	Spi_HWUnitStatus[hwdev] = SPI_BUSY;
+
+	// Send all channel data corresponding to this channel
+
+	return E_OK;
+}
+
+
+// move this function
+Std_ReturnType Spi_SyncTransmit_Job(Spi_JobType job_id) {
+	int i;
+	Spi_ChannelType ch_id;
+
+	if (job_id >= SPI_DRIVER_MAX_JOB) {
+		return E_NOT_OK;
+	}
+
+	Spi_JobResult[job_id] = SPI_JOB_QUEUED;
+
+	// Send all channel data corresponding to this job
+	for (int i; i < SpiJobCfg[job_id].spi_chan_list_size; i++) {
+		ch_id = SpiJobCfg[job_id].spi_chan_list[i];
+		Spi_SyncTransmit_Channel(ch_id, SpiJobCfg[job_id].spi_dev_assignment);
+	}
+
+	return E_OK;
+}
+
+
+
+/* Service to transmit data on the SPI bus */
+Std_ReturnType Spi_SyncTransmit(Spi_SequenceType Sequence) {
+	int i;
+	Spi_JobType job_id;
+
+	if (Sequence >= SPI_DRIVER_MAX_SEQUENCE) {
+		return SPI_SEQ_FAILED;
+	}
+
+	if (Spi_SeqResult[Sequence] == SPI_SEQ_PENDING) {
+		return E_NOT_OK;
+	}
+
+	Spi_State = SPI_BUSY;
+	Spi_SeqResult[Sequence] = SPI_SEQ_PENDING;
+
+	// Execute Jobs of this Sequence
+	for (int i; i < SpiSequenceCfg[Sequence].spi_job_list_size; i++) {
+		job_id = SpiSequenceCfg[Sequence].spi_job_list[i];
+		Spi_SyncTransmit_Job(job_id);
+	}
+
+	return E_OK;
+}
+
+
+/* Service to transmit data on the SPI bus */
+Std_ReturnType Spi_AsyncTransmit(Spi_SequenceType Sequence) {
+	if (Sequence > SPI_DRIVER_MAX_SEQUENCE) {
+		return E_NOT_OK;
+	}
+
+	if (Spi_SeqResult[Sequence] == SPI_SEQ_PENDING) {
+		return E_NOT_OK;
+	}
+
+	// call board specific function to initiate a transfer
+
+	Spi_State = SPI_BUSY;
+	Spi_SeqResult[Sequence] = SPI_SEQ_PENDING;
+	// Spi_JobResult[??] = SPI_JOB_QUEUED;
+
+	return E_OK;
+}
+

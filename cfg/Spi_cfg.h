@@ -76,8 +76,9 @@ typedef struct {
     const uint8* spi_default_data;
     uint16 spi_default_data_len;
     uint16 spi_ib_num_buf;
-    uint32 spi_ib_buf_len;
-    uint8* spi_ib_buf_ptr;
+    uint32 spi_ib_buf_len;   /* length of int. src & dst buffers */
+    uint8* spi_ib_buf_s_ptr; /* int. src buffer (Tx buffer) ptr */
+    uint8* spi_ib_buf_d_ptr; /* int. dst buffer (Rx buffer) ptr */
     uint16 spi_eb_max_len;
     uint16* spi_eb_buf_l_ptr; /* length of ext. src & dst buffers */
     uint8** spi_eb_buf_s_ptr; /* ext. src buffer (Tx buffer) ptr */
@@ -118,6 +119,13 @@ typedef struct {
     const SpiJobCfgType* jobs[SPI_DRIVER_MAX_JOB];
     const SpiSequenceCfgType* sequences[SPI_DRIVER_MAX_SEQUENCE];
 } Spi_ConfigType;
+
+
+/* NammaAUTOSAR's custom enum, which will make code more readable */
+typedef enum {
+	SEQ_ENUM_ETHERNET_CMD,
+	SEQ_ENUM_MAX
+} Spi_SequenceEnumType;
 
 
 extern const SpiGeneralCfgType SpiGeneralCfg;

@@ -43,10 +43,11 @@ const uint8 SpiDefaultData_1[] = {
 	0xAA, 0x55, 0x12, 0x34, 
 };
 
-static uint8 SpiIB_BufferChn_0[1500];
-static uint16 SpiEB_BufferLen_Chn_1;
-static uint8* SpiEB_BufferSrc_Chn_1;
-static uint8* SpiEB_BufferDst_Chn_1;
+static uint8 SpiIB_BufferSrc_Chn_0[1500];
+static uint8 SpiIB_BufferDst_Chn_0[1500];
+static uint16 SpiEB_BufferLen_Chn_1 = 0;
+static uint8* SpiEB_BufferSrc_Chn_1 = NULL;
+static uint8* SpiEB_BufferDst_Chn_1 = NULL;
 
 const SpiChannelCfgType SpiChannelCfg[] = {
 	{
@@ -58,10 +59,11 @@ const SpiChannelCfgType SpiChannelCfg[] = {
 		.spi_eb_max_len = 0,
 		.spi_ib_num_buf = 1500,
 		.spi_ib_buf_len = 1500,
-		.spi_ib_buf_ptr = SpiIB_BufferChn_0,
-		.spi_eb_buf_l_ptr = NULL,
+		.spi_ib_buf_s_ptr = SpiIB_BufferSrc_Chn_0,
+		.spi_ib_buf_d_ptr = SpiIB_BufferDst_Chn_0,
 		.spi_eb_buf_s_ptr = NULL,
 		.spi_eb_buf_d_ptr = NULL,
+		.spi_eb_buf_l_ptr = NULL,
 		.spi_tx_start = SPI_TX_START_MSB
 	},
 	{
@@ -73,10 +75,11 @@ const SpiChannelCfgType SpiChannelCfg[] = {
 		.spi_eb_max_len = 0,
 		.spi_ib_num_buf = 0,
 		.spi_ib_buf_len = 0,
-		.spi_ib_buf_ptr = NULL,
-		.spi_eb_buf_l_ptr = &SpiEB_BufferLen_Chn_1,
+		.spi_ib_buf_s_ptr = NULL,
+		.spi_ib_buf_d_ptr = NULL,
 		.spi_eb_buf_s_ptr = &SpiEB_BufferSrc_Chn_1,
 		.spi_eb_buf_d_ptr = &SpiEB_BufferDst_Chn_1,
+		.spi_eb_buf_l_ptr = &SpiEB_BufferLen_Chn_1,
 		.spi_tx_start = SPI_TX_START_MSB
 	}
 };
@@ -91,6 +94,7 @@ const SpiJobCfgType SpiJobCfg[] = {
 		.spi_job_id = 0,
 		.spi_job_priority = 0,
 		.job_end_notification_fn = NULL,
+		.spi_dev_assignment = SPI_EXT_DEV_CSIB0,
 		.spi_chan_list_size = 1,
 		.spi_chan_list = SpiChannelList_0,
 	}
