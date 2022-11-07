@@ -125,6 +125,7 @@ extern const SpiExternalDeviceType SpiExternalDeviceCfg[SPI_DRIVER_MAX_HW_UNIT];
 extern const SpiChannelCfgType SpiChannelCfg[SPI_DRIVER_MAX_CHANNEL];
 extern const SpiJobCfgType SpiJobCfg[SPI_DRIVER_MAX_JOB];
 extern const SpiSequenceCfgType SpiSequenceCfg[SPI_DRIVER_MAX_SEQUENCE];
+extern const Spi_ConfigType SpiConfigs;
 
 
 #endif

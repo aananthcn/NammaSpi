@@ -217,7 +217,7 @@ void Spi_Cancel(Spi_SequenceType Sequence) {
 		return;
 	}
 
-	Spi_GetSequenceResult[Sequence] = SPI_SEQ_CANCELED;
+	Spi_SeqResult[Sequence] = SPI_SEQ_CANCELED;
 }
 
 

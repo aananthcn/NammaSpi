@@ -112,7 +112,7 @@ const SpiSequenceCfgType SpiSequenceCfg[] = {
 };
 
 
-const Spi_ConfigType SpiCfg = {
+const Spi_ConfigType SpiConfigs = {
 	.general   = SpiGeneralCfg,
 	.devices   = SpiExternalDeviceCfg,
 	.channels  = SpiChannelCfg,
