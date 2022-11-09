@@ -39,12 +39,22 @@ static Spi_SeqResultType Spi_SeqResult[SPI_DRIVER_MAX_SEQUENCE];
 // Functions
 void Spi_Init(const Spi_ConfigType* ConfigPtr) {
 	int i;
-
-	//call bsp specific init function
-	bsp_spi_init();
+	uint32 baudrate;
+	uint8 tfr_type;
+	uint8 clk_pol;
+	uint8 cs_pol;
+	uint8 databits;
 
 	Spi_State = SPI_IDLE;
 	for (i = 0; i < SPI_DRIVER_MAX_HW_UNIT; i++) {
+		/* collect data from Spi_cfg.c */
+		baudrate = SpiExternalDeviceCfg[i].spi_baudrate;
+		tfr_type = SpiExternalDeviceCfg[i].spi_tfr_type;
+		clk_pol  = SpiExternalDeviceCfg[i].spi_shftclk_idle_level;
+		cs_pol   = SpiExternalDeviceCfg[i].spi_cs_polarity;
+		databits = SpiExternalDeviceCfg[i].spi_databits;
+		/* initialize board and driver */
+		bsp_spi_init(0, baudrate, tfr_type, clk_pol, cs_pol, databits);
 		Spi_HWUnitStatus[i] = SPI_IDLE;
 	}
 	for (i = 0; i < SPI_DRIVER_MAX_JOB; i++) {

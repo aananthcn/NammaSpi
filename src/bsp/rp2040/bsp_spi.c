@@ -23,9 +23,76 @@
 #include <stddef.h>
 
 #include <bsp_spi.h>
+#include <platform.h>
+#include <os_api.h>
 
 
 
-void bsp_spi_init(void) {
-	
+int bsp_spi_init(u8 spi_id, u32 baudrate, u8 tfr_type, u8 cpol, u8 cspol, u8 databits) {
+	u32 lsh4_ps;
+	u32 spi_base = SPI0_BASE;
+	u8 roundup4 = 0;
+
+	if (spi_id >= 2) {
+		return -1;
+	}
+	else if (spi_id == 1) {
+		spi_base = SPI1_BASE;
+	}
+
+	/* reset the SPI block */
+	RESET_CTRL |= (SS_BIT_SPI0 << spi_id);
+	RESET_CTRL &= ~(SS_BIT_SPI0 << spi_id);
+
+	/* Set the baudrate -- clock source SSPCLK = clk_peri = 125 MHz clk_sys.
+	   Prescale divisor shall be an even number between 2 and 254. So the 
+	   logic used below is to round up the prescale by 2 in case the decimal
+	   part is greater than 1/16th */
+	lsh4_ps = ((125000000 << 4) / baudrate);
+	if (lsh4_ps & 0xF) {
+		roundup4 = 2;
+	}
+	SSPCPSR(spi_base) = (u8) (((lsh4_ps >> 4) + roundup4) & 0xFE);
+
+	/* Control register 0 & 1 */
+	if (tfr_type) {
+		/* LSB First is not supported by RPi Pico (PL022) */
+		pr_log("Spi Error: LSB First is not suppored by RPi Pico\n");
+		return -1;
+	}
+	if (cspol) {
+		/* Chip Select active HIGH is not supported by RPi Pico (PL022) */
+		pr_log("Spi Error: Chip Select active HIGH is not suppored by RPi Pico\n");
+		return -1;
+	}
+	if (cpol) {
+		cpol = 1 << 6; // SPO
+	}
+	if ((databits < 4) || (databits > 16)) {
+		pr_log("Spi Error: Invalid databits argument passed\n");
+	}
+	else {
+		databits = databits - 1;
+	}
+	SSPCR0(spi_base) = cpol | databits;
+	SSPCR1(spi_base) = 1 << 1; // SSE enabled
+
+	return 0;
+}
+
+
+int bsp_spi_exit(u8 spi_id) {
+	u32 spi_base = SPI0_BASE;
+
+	if (spi_id >= 2) {
+		return -1;
+	}
+	else if (spi_id == 1) {
+		spi_base = SPI1_BASE;
+	}
+
+	SSPCR1(spi_base) &= ~(1 << 1); // SSE disabled
+	SSPDMACR(spi_base) &= ~(0x3);  // Tx and Rx DMA disabled
+
+	return 0;
 }

@@ -21,6 +21,10 @@
 #ifndef NASR_BRD_SPI_H
 #define NASR_BRD_SPI_H
 
-void bsp_spi_init(void);
+#include <base_types.h>
+
+int bsp_spi_init(u8 spi_id, u32 baudrate, u8 tfr_type, u8 cpol, u8 cspol, u8 databits);
+int bsp_spi_exit(u8 spi_id);
+
 
 #endif

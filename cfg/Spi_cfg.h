@@ -60,6 +60,8 @@ typedef struct {
     uint32 spi_usec_clk_2_cs;
     uint32 spi_usec_cs_2_clk;
     uint32 spi_usec_cs_2_cs;
+    uint8 spi_databits;
+    uint8 spi_tfr_type;
 } SpiExternalDeviceType;
 
 
@@ -72,7 +74,7 @@ typedef enum {
 typedef struct {
     uint16 spi_chan_id;
     uint8 spi_chan_type;
-    uint16 spi_data_width;
+    uint16 spi_data_width; /* width in bits */
     const uint8* spi_default_data;
     uint16 spi_default_data_len;
     uint16 spi_ib_num_buf;
@@ -107,7 +109,7 @@ typedef struct {
 
 
 
-#define SPI_DRIVER_MAX_CHANNEL   (2)
+#define SPI_DRIVER_MAX_CHANNEL   (1)
 #define SPI_DRIVER_MAX_JOB       (1)
 #define SPI_DRIVER_MAX_SEQUENCE  (1)
 #define SPI_DRIVER_MAX_HW_UNIT   (1)
