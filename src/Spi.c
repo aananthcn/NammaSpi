@@ -24,6 +24,9 @@
 
 #include <stddef.h>
 
+#include <bsp_spi.h>
+
+
 // Globals
 static Spi_StatusType Spi_State = SPI_UNINIT;
 static Spi_AsyncModeType Spi_Mode = SPI_INTERRUPT_MODE;
@@ -37,7 +40,8 @@ static Spi_SeqResultType Spi_SeqResult[SPI_DRIVER_MAX_SEQUENCE];
 void Spi_Init(const Spi_ConfigType* ConfigPtr) {
 	int i;
 
-	//call board specific init function
+	//call bsp specific init function
+	bsp_spi_init();
 
 	Spi_State = SPI_IDLE;
 	for (i = 0; i < SPI_DRIVER_MAX_HW_UNIT; i++) {
@@ -53,7 +57,7 @@ void Spi_Init(const Spi_ConfigType* ConfigPtr) {
 
 
 Std_ReturnType Spi_DeInit(void) {
-	// call board specific de-init function
+	// call bsp specific de-init function
 
 	Spi_State = SPI_UNINIT;
 
@@ -294,7 +298,7 @@ Std_ReturnType Spi_AsyncTransmit(Spi_SequenceType Sequence) {
 		return E_NOT_OK;
 	}
 
-	// call board specific function to initiate a transfer
+	// call bsp specific function to initiate a transfer
 
 	Spi_State = SPI_BUSY;
 	Spi_SeqResult[Sequence] = SPI_SEQ_PENDING;
