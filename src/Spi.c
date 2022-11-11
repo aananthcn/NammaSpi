@@ -218,7 +218,7 @@ Std_ReturnType Spi_SetAsyncMode(Spi_AsyncModeType Mode) {
 
 // move this function
 Std_ReturnType Spi_SyncTransmit_Channel(Spi_ChannelType ch_id, SpiExtDevID_Type hwdev) {
-	int i;
+	int i, bsp_rc;
 	uint8 *src_ptr, *dst_ptr;
 	uint16 buf_len;
 
@@ -245,6 +245,18 @@ Std_ReturnType Spi_SyncTransmit_Channel(Spi_ChannelType ch_id, SpiExtDevID_Type 
 	Spi_HWUnitStatus[hwdev] = SPI_BUSY;
 
 	// Send all channel data corresponding to this channel
+	if (SpiExternalDeviceCfg[hwdev].spi_databits > 8) {
+		bsp_rc = bsp_spi_tranceive_16bit(hwdev, (u16*)src_ptr, (u16*)dst_ptr, buf_len);
+	}
+	else {
+		bsp_rc = bsp_spi_tranceive_8bit(hwdev, src_ptr, dst_ptr, buf_len);
+	}
+
+	Spi_HWUnitStatus[hwdev] = SPI_IDLE;
+
+	if (bsp_rc) {
+		return E_NOT_OK;
+	}
 
 	return E_OK;
 }
@@ -262,7 +274,7 @@ Std_ReturnType Spi_SyncTransmit_Job(Spi_JobType job_id) {
 	Spi_JobResult[job_id] = SPI_JOB_QUEUED;
 
 	// Send all channel data corresponding to this job
-	for (int i; i < SpiJobCfg[job_id].spi_chan_list_size; i++) {
+	for (i = 0; i < SpiJobCfg[job_id].spi_chan_list_size; i++) {
 		ch_id = SpiJobCfg[job_id].spi_chan_list[i];
 		Spi_SyncTransmit_Channel(ch_id, SpiJobCfg[job_id].spi_dev_assignment);
 	}
@@ -289,10 +301,13 @@ Std_ReturnType Spi_SyncTransmit(Spi_SequenceType Sequence) {
 	Spi_SeqResult[Sequence] = SPI_SEQ_PENDING;
 
 	// Execute Jobs of this Sequence
-	for (int i; i < SpiSequenceCfg[Sequence].spi_job_list_size; i++) {
+	for (i = 0; i < SpiSequenceCfg[Sequence].spi_job_list_size; i++) {
 		job_id = SpiSequenceCfg[Sequence].spi_job_list[i];
 		Spi_SyncTransmit_Job(job_id);
 	}
+
+	Spi_SeqResult[Sequence] = SPI_SEQ_OK;
+	Spi_State = SPI_IDLE;
 
 	return E_OK;
 }

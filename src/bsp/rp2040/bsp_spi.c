@@ -30,14 +30,15 @@
 
 int bsp_spi_init(u8 spi_id, u32 baudrate, u8 tfr_type, u8 cpol, u8 cspol, u8 databits) {
 	u32 lsh4_ps;
-	u32 spi_base = SPI0_BASE;
+	u32 spibase = SPI0_BASE;
 	u8 roundup4 = 0;
 
 	if (spi_id >= 2) {
+		pr_log("Spi Error: Invalid spi_id for RPi Pico\n");
 		return -1;
 	}
 	else if (spi_id == 1) {
-		spi_base = SPI1_BASE;
+		spibase = SPI1_BASE;
 	}
 
 	/* reset the SPI block */
@@ -52,7 +53,7 @@ int bsp_spi_init(u8 spi_id, u32 baudrate, u8 tfr_type, u8 cpol, u8 cspol, u8 dat
 	if (lsh4_ps & 0xF) {
 		roundup4 = 2;
 	}
-	SSPCPSR(spi_base) = (u8) (((lsh4_ps >> 4) + roundup4) & 0xFE);
+	SSPCPSR(spibase) = (u8) (((lsh4_ps >> 4) + roundup4) & 0xFE);
 
 	/* Control register 0 & 1 */
 	if (tfr_type) {
@@ -74,25 +75,105 @@ int bsp_spi_init(u8 spi_id, u32 baudrate, u8 tfr_type, u8 cpol, u8 cspol, u8 dat
 	else {
 		databits = databits - 1;
 	}
-	SSPCR0(spi_base) = cpol | databits;
-	SSPCR1(spi_base) = 1 << 1; // SSE enabled
+	SSPCR0(spibase) = cpol | databits;
+	SSPCR1(spibase) = 1 << 1; // SSE enabled
 
 	return 0;
 }
 
 
 int bsp_spi_exit(u8 spi_id) {
-	u32 spi_base = SPI0_BASE;
+	u32 spibase = SPI0_BASE;
 
 	if (spi_id >= 2) {
+		pr_log("Spi Error: Invalid spi_id for RPi Pico\n");
 		return -1;
 	}
 	else if (spi_id == 1) {
-		spi_base = SPI1_BASE;
+		spibase = SPI1_BASE;
 	}
 
-	SSPCR1(spi_base) &= ~(1 << 1); // SSE disabled
-	SSPDMACR(spi_base) &= ~(0x3);  // Tx and Rx DMA disabled
+	SSPCR1(spibase) &= ~(1 << 1); // SSE disabled
+	SSPDMACR(spibase) &= ~(0x3);  // Tx and Rx DMA disabled
+
+	return 0;
+}
+
+
+
+static inline boolean is_tx_fifo_full(u32 spibase) {
+	if (SSPSR(spibase) & SPI_TNF) {
+		return FALSE;
+	}
+
+	return TRUE;
+}
+
+static inline boolean is_rx_fifo_empty(u32 spibase) {
+	if (SSPSR(spibase) & SPI_RNE) {
+		return FALSE;
+	}
+
+	return TRUE;
+}
+
+int bsp_spi_tranceive_8bit(u8 spi_id, u8 *tx_buf, u8 *rx_buf, u16 len) {
+	u32 spibase = SPI0_BASE;
+	int i;
+
+	if (spi_id >= 2) {
+		pr_log("Spi Error: Invalid spi_id for RPi Pico\n");
+		return -1;
+	}
+	else if (spi_id == 1) {
+		spibase = SPI1_BASE;
+	}
+
+	if ((tx_buf == NULL) || (rx_buf == NULL)) {
+		pr_log("Spi Error: NULL pointer passed as Tx or Rx buffer\n");
+		return -1;
+	}
+
+	for (i = 0; i < len; i++) {
+		/* wait if Tx FIFO is full */
+		while(is_tx_fifo_full(spibase)); // this line is dangerous, will add timed loop exit later
+		SSPDR(spibase) = tx_buf[i];
+
+		/* wait if Rx FIFO is empty*/
+		while(is_rx_fifo_empty(spibase)); // this line is dangerous, will add timed loop exit later
+		rx_buf[i] = SSPDR(spibase);
+	}
+
+	return 0;
+}
+
+
+int bsp_spi_tranceive_16bit(u8 spi_id, u16 *tx_buf, u16 *rx_buf, u16 len) {
+	u32 spibase = SPI0_BASE;
+	int i;
+
+	if (spi_id >= 2) {
+		pr_log("Spi Error: Invalid spi_id for RPi Pico\n");
+		return -1;
+	}
+	else if (spi_id == 1) {
+		spibase = SPI1_BASE;
+	}
+
+	if ((tx_buf == NULL) || (rx_buf == NULL)) {
+		pr_log("Spi Error: NULL pointer passed as Tx or Rx buffer\n");
+		return -1;
+	}
+
+	for (i = 0; i < len; i++) {
+		/* wait if Tx FIFO is full */
+		while(is_tx_fifo_full(spibase)); // this line is dangerous, will add timed loop exit later
+		SSPDR(spibase) = tx_buf[i];
+
+		/* wait if Rx FIFO is empty*/
+		while(is_rx_fifo_empty(spibase)); // this line is dangerous, will add timed loop exit later
+		rx_buf[i] = SSPDR(spibase);
+	}
 
 	return 0;
 }

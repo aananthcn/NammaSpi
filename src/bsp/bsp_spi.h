@@ -26,5 +26,7 @@
 int bsp_spi_init(u8 spi_id, u32 baudrate, u8 tfr_type, u8 cpol, u8 cspol, u8 databits);
 int bsp_spi_exit(u8 spi_id);
 
+int bsp_spi_tranceive_8bit(u8 spi_id, u8 *tx_buf, u8 *rx_buf, u16 len);
+int bsp_spi_tranceive_16bit(u8 spi_id, u16 *tx_buf, u16 *rx_buf, u16 len);
 
 #endif
