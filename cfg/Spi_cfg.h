@@ -48,6 +48,19 @@ typedef enum {
 } SpiCsSelectionType;
 
 
+typedef enum {
+    SPI_TX_START_MSB,
+    SPI_TX_START_LSB
+} SpiTransferStartType;
+
+
+typedef enum {
+    MOTOROLA_SPI,
+    TI_SSI,
+    NS_MICROWIRE
+} SpiFrameFormatType;
+
+
 typedef struct {
     SpiExtDevID_Type spi_hw_unit_id;
     uint32 spi_baudrate;
@@ -56,19 +69,15 @@ typedef struct {
     boolean spi_enable_cs;
     char spi_cs_id[128];
     SpiCsSelectionType spi_cs_selection;
+    sint16 spi_cs_dio;
     SpiLevelType spi_cs_polarity;
     uint32 spi_usec_clk_2_cs;
     uint32 spi_usec_cs_2_clk;
     uint32 spi_usec_cs_2_cs;
     uint8 spi_databits;
-    uint8 spi_tfr_type;
+    SpiTransferStartType spi_tfr_type;
+    SpiFrameFormatType spi_frame_fmt;
 } SpiExternalDeviceType;
-
-
-typedef enum {
-    SPI_TX_START_MSB,
-    SPI_TX_START_LSB
-} SpiTransferStartType;
 
 
 typedef struct {
@@ -109,7 +118,7 @@ typedef struct {
 
 
 
-#define SPI_DRIVER_MAX_CHANNEL   (1)
+#define SPI_DRIVER_MAX_CHANNEL   (3)
 #define SPI_DRIVER_MAX_JOB       (1)
 #define SPI_DRIVER_MAX_SEQUENCE  (1)
 #define SPI_DRIVER_MAX_HW_UNIT   (1)

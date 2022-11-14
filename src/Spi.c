@@ -21,6 +21,7 @@
 
 #include <Spi.h>
 #include <Spi_cfg.h>
+#include <Dio.h>
 
 #include <stddef.h>
 
@@ -44,6 +45,7 @@ void Spi_Init(const Spi_ConfigType* ConfigPtr) {
 	uint8 clk_pol;
 	uint8 cs_pol;
 	uint8 databits;
+	uint8 frm_fmt;
 
 	Spi_State = SPI_IDLE;
 	for (i = 0; i < SPI_DRIVER_MAX_HW_UNIT; i++) {
@@ -53,8 +55,9 @@ void Spi_Init(const Spi_ConfigType* ConfigPtr) {
 		clk_pol  = SpiExternalDeviceCfg[i].spi_shftclk_idle_level;
 		cs_pol   = SpiExternalDeviceCfg[i].spi_cs_polarity;
 		databits = SpiExternalDeviceCfg[i].spi_databits;
+		frm_fmt  = SpiExternalDeviceCfg[i].spi_frame_fmt;
 		/* initialize board and driver */
-		bsp_spi_init(0, baudrate, tfr_type, clk_pol, cs_pol, databits);
+		bsp_spi_init(0, baudrate, tfr_type, clk_pol, cs_pol, frm_fmt, databits);
 		Spi_HWUnitStatus[i] = SPI_IDLE;
 	}
 	for (i = 0; i < SPI_DRIVER_MAX_JOB; i++) {
@@ -221,6 +224,7 @@ Std_ReturnType Spi_SyncTransmit_Channel(Spi_ChannelType ch_id, SpiExtDevID_Type 
 	int i, bsp_rc;
 	uint8 *src_ptr, *dst_ptr;
 	uint16 buf_len;
+	sint16 cs_pin;
 
 	if (ch_id >= SPI_DRIVER_MAX_CHANNEL) {
 		return E_NOT_OK;
@@ -243,6 +247,10 @@ Std_ReturnType Spi_SyncTransmit_Channel(Spi_ChannelType ch_id, SpiExtDevID_Type 
 	}
 
 	Spi_HWUnitStatus[hwdev] = SPI_BUSY;
+	cs_pin = SpiExternalDeviceCfg[hwdev].spi_cs_dio;
+	if (cs_pin >= 0) {
+		Dio_WritePort(cs_pin, STD_HIGH);
+	}
 
 	// Send all channel data corresponding to this channel
 	if (SpiExternalDeviceCfg[hwdev].spi_databits > 8) {
@@ -253,6 +261,9 @@ Std_ReturnType Spi_SyncTransmit_Channel(Spi_ChannelType ch_id, SpiExtDevID_Type 
 	}
 
 	Spi_HWUnitStatus[hwdev] = SPI_IDLE;
+	if (cs_pin >= 0) {
+		Dio_WritePort(cs_pin, STD_LOW);
+	}
 
 	if (bsp_rc) {
 		return E_NOT_OK;

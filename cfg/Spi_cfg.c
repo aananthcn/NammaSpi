@@ -26,36 +26,82 @@ const SpiExternalDeviceType SpiExternalDeviceCfg[] = {
 		.spi_shftclk_idle_level = SPI_LEVEL_LOW,
 		.spi_enable_cs = FALSE,
 		.spi_cs_id = "CS_Ethernet",
-		.spi_cs_selection = CS_VIA_PERIPHERAL_ENGINE,
+		.spi_cs_selection = CS_VIA_GPIO,
+		.spi_cs_dio = 1,
 		.spi_cs_polarity = SPI_LEVEL_LOW,
 		.spi_usec_clk_2_cs = 0,
 		.spi_usec_cs_2_clk = 1,
 		.spi_usec_cs_2_cs = 1,
-		.spi_databits = 16,
-		.spi_tfr_type = SPI_TX_START_MSB
+		.spi_databits = 8,
+		.spi_tfr_type = SPI_TX_START_MSB,
+		.spi_frame_fmt = NS_MICROWIRE
 	}
 };
 
 
 const uint8 SpiDefaultData_0[] = {
-	0xAA, 0x55, 0x12, 0x34, 0x45, 0x8a, 0x45, 0xb3, 0x87, 0x61, 0x90, 
+	0x00, 
 };
 
-static uint8 SpiIB_BufferTx_Chn_0[1500];
-static uint8 SpiIB_BufferRx_Chn_0[1500];
+const uint8 SpiDefaultData_1[] = {
+	0xAA, 0x55, 
+};
+
+const uint8 SpiDefaultData_2[] = {
+	0xAA, 0x55, 0x12, 
+};
+
+static uint8 SpiIB_BufferTx_Chn_0[1];
+static uint8 SpiIB_BufferRx_Chn_0[1];
+static uint8 SpiIB_BufferTx_Chn_1[2];
+static uint8 SpiIB_BufferRx_Chn_1[2];
+static uint8 SpiIB_BufferTx_Chn_2[3];
+static uint8 SpiIB_BufferRx_Chn_2[3];
 
 const SpiChannelCfgType SpiChannelCfg[] = {
 	{
 		.spi_chan_id = 0,
 		.spi_chan_type = SPI_CHAN_TYPE_IB,
-		.spi_data_width = 16, /* bits */
+		.spi_data_width = 8, /* bits */
 		.spi_default_data = SpiDefaultData_0,
-		.spi_default_data_len = 11,
+		.spi_default_data_len = 1,
 		.spi_eb_max_len = 0,
-		.spi_ib_num_buf = 750,
-		.spi_ib_buf_len = 1500,
+		.spi_ib_num_buf = 1,
+		.spi_ib_buf_len = 1,
 		.spi_ib_buf_s_ptr = SpiIB_BufferTx_Chn_0,
 		.spi_ib_buf_d_ptr = SpiIB_BufferRx_Chn_0,
+		.spi_eb_buf_s_ptr = NULL,
+		.spi_eb_buf_d_ptr = NULL,
+		.spi_eb_buf_l_ptr = NULL,
+		.spi_tx_start = SPI_TX_START_MSB
+	},
+	{
+		.spi_chan_id = 1,
+		.spi_chan_type = SPI_CHAN_TYPE_IB,
+		.spi_data_width = 16, /* bits */
+		.spi_default_data = SpiDefaultData_1,
+		.spi_default_data_len = 2,
+		.spi_eb_max_len = 0,
+		.spi_ib_num_buf = 1,
+		.spi_ib_buf_len = 2,
+		.spi_ib_buf_s_ptr = SpiIB_BufferTx_Chn_1,
+		.spi_ib_buf_d_ptr = SpiIB_BufferRx_Chn_1,
+		.spi_eb_buf_s_ptr = NULL,
+		.spi_eb_buf_d_ptr = NULL,
+		.spi_eb_buf_l_ptr = NULL,
+		.spi_tx_start = SPI_TX_START_MSB
+	},
+	{
+		.spi_chan_id = 2,
+		.spi_chan_type = SPI_CHAN_TYPE_IB,
+		.spi_data_width = 8, /* bits */
+		.spi_default_data = SpiDefaultData_2,
+		.spi_default_data_len = 3,
+		.spi_eb_max_len = 0,
+		.spi_ib_num_buf = 3,
+		.spi_ib_buf_len = 3,
+		.spi_ib_buf_s_ptr = SpiIB_BufferTx_Chn_2,
+		.spi_ib_buf_d_ptr = SpiIB_BufferRx_Chn_2,
 		.spi_eb_buf_s_ptr = NULL,
 		.spi_eb_buf_d_ptr = NULL,
 		.spi_eb_buf_l_ptr = NULL,
