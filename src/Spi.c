@@ -249,7 +249,7 @@ Std_ReturnType Spi_SyncTransmit_Channel(Spi_ChannelType ch_id, SpiExtDevID_Type 
 	Spi_HWUnitStatus[hwdev] = SPI_BUSY;
 	cs_pin = SpiExternalDeviceCfg[hwdev].spi_cs_dio;
 	if (cs_pin >= 0) {
-		Dio_WritePort(cs_pin, STD_HIGH);
+		Dio_WriteChannel(cs_pin, STD_LOW);
 	}
 
 	// Send all channel data corresponding to this channel
@@ -262,7 +262,7 @@ Std_ReturnType Spi_SyncTransmit_Channel(Spi_ChannelType ch_id, SpiExtDevID_Type 
 
 	Spi_HWUnitStatus[hwdev] = SPI_IDLE;
 	if (cs_pin >= 0) {
-		Dio_WritePort(cs_pin, STD_LOW);
+		Dio_WriteChannel(cs_pin, STD_HIGH);
 	}
 
 	if (bsp_rc) {
