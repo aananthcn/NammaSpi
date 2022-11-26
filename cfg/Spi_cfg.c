@@ -21,7 +21,7 @@ const SpiGeneralCfgType SpiGeneralCfg = {
 const SpiExternalDeviceType SpiExternalDeviceCfg[] = {
 	{
 		.spi_hw_unit_id = SPI_EXT_DEV_CSIB0,
-		.spi_baudrate = 1000000, /* bps or Hz */
+		.spi_baudrate = 100000, /* bps or Hz */
 		.spi_data_shift_edge = SPI_EDGE_LEADING,
 		.spi_shftclk_idle_level = SPI_LEVEL_LOW,
 		.spi_enable_cs = FALSE,

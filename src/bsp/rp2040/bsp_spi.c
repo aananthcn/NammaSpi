@@ -114,6 +114,9 @@ int bsp_spi_init(u8 spi_id, u32 baudrate, u8 tfr_type, u8 cpol, u8 cspol, u8 ff,
 	else {
 		databits = databits - 1;
 	}
+
+	/* Always Enable DMA & enable SPI */
+	SSPDMACR(spibase) = 0x3;
 	SSPCR0(spibase) = cpol | ff << 4 | databits;
 	SSPCR1(spibase) = 1 << 1; // SSE enabled
 
