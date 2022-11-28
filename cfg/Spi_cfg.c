@@ -34,7 +34,7 @@ const SpiExternalDeviceType SpiExternalDeviceCfg[] = {
 		.spi_usec_cs_2_cs = 1,
 		.spi_databits = 8,
 		.spi_tfr_type = SPI_TX_START_MSB,
-		.spi_frame_fmt = NS_MICROWIRE
+		.spi_frame_fmt = MOTOROLA_SPI
 	}
 };
 
@@ -44,19 +44,19 @@ const uint8 SpiDefaultData_0[] = {
 };
 
 const uint8 SpiDefaultData_1[] = {
-	0xAA, 0x55, 
+	0x01, 
 };
 
 const uint8 SpiDefaultData_2[] = {
-	0xAA, 0x55, 0x12, 
+	0xAA, 0x55, 
 };
 
 static uint8 SpiIB_BufferTx_Chn_0[1];
 static uint8 SpiIB_BufferRx_Chn_0[1];
-static uint8 SpiIB_BufferTx_Chn_1[2];
-static uint8 SpiIB_BufferRx_Chn_1[2];
-static uint8 SpiIB_BufferTx_Chn_2[3];
-static uint8 SpiIB_BufferRx_Chn_2[3];
+static uint8 SpiIB_BufferTx_Chn_1[1];
+static uint8 SpiIB_BufferRx_Chn_1[1];
+static uint8 SpiIB_BufferTx_Chn_2[2];
+static uint8 SpiIB_BufferRx_Chn_2[2];
 
 const SpiChannelCfgType SpiChannelCfg[] = {
 	{
@@ -78,12 +78,12 @@ const SpiChannelCfgType SpiChannelCfg[] = {
 	{
 		.spi_chan_id = 1,
 		.spi_chan_type = SPI_CHAN_TYPE_IB,
-		.spi_data_width = 16, /* bits */
+		.spi_data_width = 8, /* bits */
 		.spi_default_data = SpiDefaultData_1,
-		.spi_default_data_len = 2,
+		.spi_default_data_len = 1,
 		.spi_eb_max_len = 0,
 		.spi_ib_num_buf = 1,
-		.spi_ib_buf_len = 2,
+		.spi_ib_buf_len = 1,
 		.spi_ib_buf_s_ptr = SpiIB_BufferTx_Chn_1,
 		.spi_ib_buf_d_ptr = SpiIB_BufferRx_Chn_1,
 		.spi_eb_buf_s_ptr = NULL,
@@ -94,12 +94,12 @@ const SpiChannelCfgType SpiChannelCfg[] = {
 	{
 		.spi_chan_id = 2,
 		.spi_chan_type = SPI_CHAN_TYPE_IB,
-		.spi_data_width = 8, /* bits */
+		.spi_data_width = 16, /* bits */
 		.spi_default_data = SpiDefaultData_2,
-		.spi_default_data_len = 3,
+		.spi_default_data_len = 2,
 		.spi_eb_max_len = 0,
-		.spi_ib_num_buf = 3,
-		.spi_ib_buf_len = 3,
+		.spi_ib_num_buf = 1,
+		.spi_ib_buf_len = 2,
 		.spi_ib_buf_s_ptr = SpiIB_BufferTx_Chn_2,
 		.spi_ib_buf_d_ptr = SpiIB_BufferRx_Chn_2,
 		.spi_eb_buf_s_ptr = NULL,
@@ -111,7 +111,11 @@ const SpiChannelCfgType SpiChannelCfg[] = {
 
 
 const uint16 SpiChannelList_0[] = {
-	0, 
+	0, 1, 
+};
+
+const uint16 SpiChannelList_1[] = {
+	0, 2, 
 };
 
 const SpiJobCfgType SpiJobCfg[] = {
@@ -120,14 +124,26 @@ const SpiJobCfgType SpiJobCfg[] = {
 		.spi_job_priority = 0,
 		.job_end_notification_fn = NULL,
 		.spi_dev_assignment = SPI_EXT_DEV_CSIB0,
-		.spi_chan_list_size = 1,
+		.spi_chan_list_size = 2,
 		.spi_chan_list = SpiChannelList_0,
+	},
+	{
+		.spi_job_id = 1,
+		.spi_job_priority = 0,
+		.job_end_notification_fn = NULL,
+		.spi_dev_assignment = SPI_EXT_DEV_CSIB0,
+		.spi_chan_list_size = 2,
+		.spi_chan_list = SpiChannelList_1,
 	}
 };
 
 
 const uint16 SpiJobAssignment_0[] = {
 	0, 
+};
+
+const uint16 SpiJobAssignment_1[] = {
+	1, 
 };
 
 const SpiSequenceCfgType SpiSequenceCfg[] = {
@@ -137,6 +153,13 @@ const SpiSequenceCfgType SpiSequenceCfg[] = {
 		.seq_end_notification_fn = NULL,
 		.spi_job_list_size = 1,
 		.spi_job_list = SpiJobAssignment_0,
+	},
+	{
+		.spi_seq_id = 1,
+		.spi_seq_interruptible = FALSE,
+		.seq_end_notification_fn = NULL,
+		.spi_job_list_size = 1,
+		.spi_job_list = SpiJobAssignment_1,
 	}
 };
 

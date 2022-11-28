@@ -224,7 +224,6 @@ Std_ReturnType Spi_SyncTransmit_Channel(Spi_ChannelType ch_id, SpiExtDevID_Type 
 	int i, bsp_rc;
 	uint8 *src_ptr, *dst_ptr;
 	uint16 buf_len;
-	sint16 cs_pin;
 
 	if (ch_id >= SPI_DRIVER_MAX_CHANNEL) {
 		return E_NOT_OK;
@@ -247,10 +246,6 @@ Std_ReturnType Spi_SyncTransmit_Channel(Spi_ChannelType ch_id, SpiExtDevID_Type 
 	}
 
 	Spi_HWUnitStatus[hwdev] = SPI_BUSY;
-	cs_pin = SpiExternalDeviceCfg[hwdev].spi_cs_dio;
-	if (cs_pin >= 0) {
-		Dio_WriteChannel(cs_pin, STD_LOW);
-	}
 
 	// Send all channel data corresponding to this channel
 	if (SpiExternalDeviceCfg[hwdev].spi_databits > 8) {
@@ -261,9 +256,6 @@ Std_ReturnType Spi_SyncTransmit_Channel(Spi_ChannelType ch_id, SpiExtDevID_Type 
 	}
 
 	Spi_HWUnitStatus[hwdev] = SPI_IDLE;
-	if (cs_pin >= 0) {
-		Dio_WriteChannel(cs_pin, STD_HIGH);
-	}
 
 	if (bsp_rc) {
 		return E_NOT_OK;
@@ -276,18 +268,32 @@ Std_ReturnType Spi_SyncTransmit_Channel(Spi_ChannelType ch_id, SpiExtDevID_Type 
 // move this function
 Std_ReturnType Spi_SyncTransmit_Job(Spi_JobType job_id) {
 	int i;
+	sint16 cs_pin;
 	Spi_ChannelType ch_id;
+	SpiExtDevID_Type hwdev;
 
 	if (job_id >= SPI_DRIVER_MAX_JOB) {
 		return E_NOT_OK;
 	}
 
 	Spi_JobResult[job_id] = SPI_JOB_QUEUED;
+	hwdev = SpiJobCfg[job_id].spi_dev_assignment;
+
+	// chip select assert, if CS_VIA_GPIO is configured
+	cs_pin = SpiExternalDeviceCfg[hwdev].spi_cs_dio;
+	if (cs_pin >= 0) {
+		Dio_WriteChannel(cs_pin, STD_LOW);
+	}
 
 	// Send all channel data corresponding to this job
 	for (i = 0; i < SpiJobCfg[job_id].spi_chan_list_size; i++) {
 		ch_id = SpiJobCfg[job_id].spi_chan_list[i];
-		Spi_SyncTransmit_Channel(ch_id, SpiJobCfg[job_id].spi_dev_assignment);
+		Spi_SyncTransmit_Channel(ch_id, hwdev);
+	}
+
+	// chip select de-assert, if CS_VIA_GPIO is configured
+	if (cs_pin >= 0) {
+		Dio_WriteChannel(cs_pin, STD_HIGH);
 	}
 
 	return E_OK;
