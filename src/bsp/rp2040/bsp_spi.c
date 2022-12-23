@@ -23,7 +23,7 @@
 #include <stddef.h>
 
 #include <bsp_spi.h>
-#include <platform.h>
+#include <bsp/platform.h>
 #include <os_api.h>
 
 
