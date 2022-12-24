@@ -52,7 +52,7 @@ SPI_OBJS := \
 	${SPI_PATH}/src/bsp/rp2040/bsp_spi.o
 
 
-LDFLAGS := -g
+LDFLAGS := -g -relocatable
 CFLAGS  := -Werror ${INCDIRS} -g
 ASFLAGS := ${INCDIRS} -g
 TARGET 	:= libSpi.la
@@ -64,8 +64,7 @@ all: $(TARGET)
 LIB_OBJS := $(SPI_OBJS)
 
 $(TARGET): $(LIB_OBJS)
-	$(AR) r $@ $^
-	$(RANLIB) $@
+	$(LD) ${LDFLAGS} -o $@ $^
 
 clean:
 	$(RM) $(LIB_OBJS) $(TARGET)
