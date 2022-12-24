@@ -51,9 +51,8 @@ const uint8 SpiDefaultData_2[] = {
 	0xAA, 0x55, 
 };
 
-static uint16 SpiEB_BufferLen_Chn_0 = 0;
-static uint8* SpiEB_BufferTx_Chn_0 = NULL;
-static uint8* SpiEB_BufferRx_Chn_0 = NULL;
+static uint8 SpiIB_BufferTx_Chn_0[1];
+static uint8 SpiIB_BufferRx_Chn_0[1];
 static uint8 SpiIB_BufferTx_Chn_1[1];
 static uint8 SpiIB_BufferRx_Chn_1[1];
 static uint8 SpiIB_BufferTx_Chn_2[2];
@@ -62,18 +61,18 @@ static uint8 SpiIB_BufferRx_Chn_2[2];
 const SpiChannelCfgType SpiChannelCfg[] = {
 	{
 		.spi_chan_id = 0,
-		.spi_chan_type = SPI_CHAN_TYPE_EB,
+		.spi_chan_type = SPI_CHAN_TYPE_IB,
 		.spi_data_width = 8, /* bits */
 		.spi_default_data = SpiDefaultData_0,
 		.spi_default_data_len = 1,
 		.spi_eb_max_len = 0,
-		.spi_ib_num_buf = 0,
-		.spi_ib_buf_len = 0,
-		.spi_ib_buf_s_ptr = NULL,
-		.spi_ib_buf_d_ptr = NULL,
-		.spi_eb_buf_s_ptr = &SpiEB_BufferTx_Chn_0,
-		.spi_eb_buf_d_ptr = &SpiEB_BufferRx_Chn_0,
-		.spi_eb_buf_l_ptr = &SpiEB_BufferLen_Chn_0,
+		.spi_ib_num_buf = 1,
+		.spi_ib_buf_len = 1,
+		.spi_ib_buf_s_ptr = SpiIB_BufferTx_Chn_0,
+		.spi_ib_buf_d_ptr = SpiIB_BufferRx_Chn_0,
+		.spi_eb_buf_s_ptr = NULL,
+		.spi_eb_buf_d_ptr = NULL,
+		.spi_eb_buf_l_ptr = NULL,
 		.spi_tx_start = SPI_TX_START_MSB
 	},
 	{
