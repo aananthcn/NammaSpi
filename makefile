@@ -42,6 +42,7 @@ INCDIRS  += -I ${SPI_PATH}/src \
 	    -I ${OS_PATH}/include
 
 
+$(info  )
 $(info compiling Spi source files)
 
 
