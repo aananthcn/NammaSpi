@@ -118,9 +118,9 @@ typedef struct {
 
 
 
-#define SPI_DRIVER_MAX_CHANNEL   (3)
-#define SPI_DRIVER_MAX_JOB       (2)
-#define SPI_DRIVER_MAX_SEQUENCE  (2)
+#define SPI_DRIVER_MAX_CHANNEL   (1)
+#define SPI_DRIVER_MAX_JOB       (1)
+#define SPI_DRIVER_MAX_SEQUENCE  (1)
 #define SPI_DRIVER_MAX_HW_UNIT   (1)
 
 typedef struct {
@@ -134,8 +134,7 @@ typedef struct {
 
 /* NammaAUTOSAR's custom enum, which will make code more readable */
 typedef enum {
-	SEQ_ETH_2_BYTE,
-	SEQ_ETH_3_BYTE,
+	SEQ_ETHERNET_BASIC_TX_RX,
 	SEQ_ENUM_MAX
 } Spi_SequenceEnumType;
 

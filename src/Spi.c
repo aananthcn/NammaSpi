@@ -142,11 +142,11 @@ Std_ReturnType Spi_SetupEB(Spi_ChannelType Channel, const Spi_DataBufferType* Sr
 
 	*SpiChannelCfg[Channel].spi_eb_buf_l_ptr = Length;
 
-	if (SrcDataBufferPtr == NULL) {
+	if (SrcDataBufferPtr != NULL) {
 		*SpiChannelCfg[Channel].spi_eb_buf_s_ptr = (uint8*) SrcDataBufferPtr;
 	}
 
-	if (DesDataBufferPtr == NULL) {
+	if (DesDataBufferPtr != NULL) {
 		*SpiChannelCfg[Channel].spi_eb_buf_d_ptr = (uint8*) DesDataBufferPtr;
 	}
 
