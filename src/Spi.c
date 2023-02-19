@@ -26,6 +26,7 @@
 #include <stddef.h>
 
 #include <bsp_spi.h>
+#include <os_api.h> // for pr_log()
 
 
 // Globals
@@ -66,6 +67,8 @@ void Spi_Init(const Spi_ConfigType* ConfigPtr) {
 	for (i = 0; i < SPI_DRIVER_MAX_SEQUENCE; i++) {
 		Spi_SeqResult[i] = SPI_SEQ_OK;
 	}
+
+	pr_log("Spi init complete!\n");
 }
 
 
