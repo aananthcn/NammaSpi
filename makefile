@@ -37,7 +37,7 @@ INCDIRS  += -I ${SPI_PATH}/src \
 	    -I ${DIO_PATH}/api \
 	    -I ${CAR_OS_INC_PATH}/autosar \
 	    -I ${CAR_OS_INC_PATH}/car_os \
-	    -I ${CAR_OS_BOARD_PATH} \
+	    -I ${CAR_OS_BOARDSOC_PATH} \
 	    -I ${OS_PATH}/include
 
 
