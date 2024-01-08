@@ -25,7 +25,6 @@ typedef struct {
 
 
 typedef enum {
-	SPI_EXT_DEV_CSIB0,
 	SPI_EXT_DEV_MAX
 } SpiExtDevID_Type;
 
@@ -118,10 +117,10 @@ typedef struct {
 
 
 
-#define SPI_DRIVER_MAX_CHANNEL   (1)
-#define SPI_DRIVER_MAX_JOB       (1)
-#define SPI_DRIVER_MAX_SEQUENCE  (1)
-#define SPI_DRIVER_MAX_HW_UNIT   (1)
+#define SPI_DRIVER_MAX_CHANNEL   (0)
+#define SPI_DRIVER_MAX_JOB       (0)
+#define SPI_DRIVER_MAX_SEQUENCE  (0)
+#define SPI_DRIVER_MAX_HW_UNIT   (0)
 
 typedef struct {
     const SpiGeneralCfgType general;
@@ -134,7 +133,6 @@ typedef struct {
 
 /* NammaAUTOSAR's custom enum, which will make code more readable */
 typedef enum {
-	SEQ_ETHERNET_BASIC_TX_RX,
 	SEQ_ENUM_MAX
 } Spi_SequenceEnumType;
 
