@@ -32,9 +32,10 @@ include ${CAR_OS_PATH}/path_defs.mk
 INCDIRS  += -I ${SPI_PATH}/src \
 	    -I ${SPI_PATH}/api	\
 	    -I ${SPI_PATH}/cfg \
-	    -I ${SPI_PATH}/src/bsp \
 	    -I ${MCU_PATH}/src \
 	    -I ${DIO_PATH}/api \
+	    -I ${PORT_PATH}/cfg \
+	    -I ${PORT_PATH}/api \
 	    -I ${CAR_OS_INC_PATH}/autosar \
 	    -I ${CAR_OS_INC_PATH}/car_os \
 	    -I ${CAR_OS_BOARDSOC_PATH} \
@@ -48,13 +49,9 @@ $(info compiling Spi source files)
 SPI_OBJS := \
 	${SPI_PATH}/src/Spi.o \
 	${SPI_PATH}/cfg/Spi_cfg.o \
-	${SPI_PATH}/src/SchM_Spi.o \
-	${SPI_PATH}/src/bsp/rp2040/bsp_spi.o
+	${SPI_PATH}/src/SchM_Spi.o
 
 
-# LDFLAGS := -g -relocatable
-# CFLAGS  := -Werror ${INCDIRS} -g
-# ASFLAGS := ${INCDIRS} -g
 TARGET 	:= libSpi.a
 # include c_l_flags.mk to add more definitions specific to micro-controller
 include ${CAR_OS_PATH}/c_l_flags.mk
@@ -69,7 +66,6 @@ LIB_OBJS := $(SPI_OBJS)
 
 $(TARGET): $(LIB_OBJS)
 	$(AR) -rcs ${TARGET} ${LIB_OBJS}
-#	$(LD) ${LDFLAGS} -o $@ $^
 
 clean:
 	$(RM) $(LIB_OBJS) $(TARGET)

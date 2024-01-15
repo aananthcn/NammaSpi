@@ -5,6 +5,9 @@
 
 #include <Platform_Types.h>
 
+#include <zephyr/drivers/spi.h>
+#include <zephyr/drivers/gpio.h>
+
 
 #define SPI_CHAN_TYPE_IB        1
 #define SPI_CHAN_TYPE_EB        2
@@ -25,6 +28,7 @@ typedef struct {
 
 
 typedef enum {
+	SPI_EXT_DEV_spi0,
 	SPI_EXT_DEV_MAX
 } SpiExtDevID_Type;
 
@@ -117,10 +121,10 @@ typedef struct {
 
 
 
-#define SPI_DRIVER_MAX_CHANNEL   (0)
-#define SPI_DRIVER_MAX_JOB       (0)
-#define SPI_DRIVER_MAX_SEQUENCE  (0)
-#define SPI_DRIVER_MAX_HW_UNIT   (0)
+#define SPI_DRIVER_MAX_CHANNEL   (1)
+#define SPI_DRIVER_MAX_JOB       (1)
+#define SPI_DRIVER_MAX_SEQUENCE  (1)
+#define SPI_DRIVER_MAX_HW_UNIT   (1)
 
 typedef struct {
     const SpiGeneralCfgType general;
@@ -133,6 +137,7 @@ typedef struct {
 
 /* NammaAUTOSAR's custom enum, which will make code more readable */
 typedef enum {
+	SEQ_ETHERNET_BASIC_TX_RX,
 	SEQ_ENUM_MAX
 } Spi_SequenceEnumType;
 
@@ -144,5 +149,9 @@ extern const SpiJobCfgType SpiJobCfg[SPI_DRIVER_MAX_JOB];
 extern const SpiSequenceCfgType SpiSequenceCfg[SPI_DRIVER_MAX_SEQUENCE];
 extern const Spi_ConfigType SpiConfigs;
 
+
+/* Zephyr SPI Device Constants Declarations */
+extern const struct device *Spi_ZDevs[];
+extern const struct spi_config Spi_ZCfgs[];
 
 #endif
