@@ -186,7 +186,7 @@ Std_ReturnType Spi_SetAsyncMode(Spi_AsyncModeType Mode) {
 Std_ReturnType Spi_SyncTransmit_Channel(Spi_ChannelType ch_id, SpiExtDevID_Type hwdev_id) {
 	int zspi_rc;
 	uint8 *src_ptr, *dst_ptr;
-	struct spi_buf_set tx_bufs, rx_bufs;
+	struct spi_buf_set tx_bufset, rx_bufset;
 	struct spi_buf tx_buf[BUF_COUNT], rx_buf[BUF_COUNT];
 	struct device *spidev;
 	uint16 buf_len;
@@ -217,36 +217,28 @@ Std_ReturnType Spi_SyncTransmit_Channel(Spi_ChannelType ch_id, SpiExtDevID_Type 
 		buf_len = SpiChannelCfg[ch_id].spi_ib_buf_len;
 	}
 	else {
-		src_ptr = (uint8 *) SpiChannelCfg[ch_id].spi_eb_buf_s_ptr;
-		dst_ptr = (uint8 *) SpiChannelCfg[ch_id].spi_eb_buf_d_ptr;
+		src_ptr = *SpiChannelCfg[ch_id].spi_eb_buf_s_ptr;
+		dst_ptr = *SpiChannelCfg[ch_id].spi_eb_buf_d_ptr;
 		buf_len = *SpiChannelCfg[ch_id].spi_eb_buf_l_ptr;
 	}
 
 	// initialize zephyr spi buffer structure for spi_transceive, else you get hardware fault!!
 	tx_buf[0].buf = src_ptr;
 	tx_buf[0].len = buf_len;
-	tx_bufs.buffers = tx_buf;
-	tx_bufs.count = BUF_COUNT;
+	tx_bufset.buffers = (const struct spi_buf *) &tx_buf;
+	tx_bufset.count = BUF_COUNT;
 
 	rx_buf[0].buf = dst_ptr;
 	rx_buf[0].len = buf_len;
-	rx_bufs.buffers = tx_buf;
-	rx_bufs.count = BUF_COUNT;
+	rx_bufset.buffers = (const struct spi_buf *) &rx_buf;
+	rx_bufset.count = BUF_COUNT;
 
 
 
 	Spi_HWUnitStatus[hwdev_id] = SPI_BUSY;
 
 	// Send & receive channel data corresponding to ch_id channel
-	zspi_rc = spi_transceive(spidev, &Spi_ZCfgs[hwdev_id], &tx_bufs, &rx_bufs);
-	// if (SpiExternalDeviceCfg[hwdev_id].spi_databits > 8) {
-	// 	// zspi_rc = bsp_spi_tranceive_16bit(hwdev_id, (u16*)src_ptr, (u16*)dst_ptr, buf_len);
-	// 	// zspi_rc = 1;
-	// }
-	// else {
-	// 	// zspi_rc = bsp_spi_tranceive_8bit(hwdev_id, src_ptr, dst_ptr, buf_len);
-	// 	zspi_rc = 1;
-	// }
+	zspi_rc = spi_transceive(spidev, &Spi_ZCfgs[hwdev_id], &tx_bufset, &rx_bufset);
 
 	Spi_HWUnitStatus[hwdev_id] = SPI_IDLE;
 
