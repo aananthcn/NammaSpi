@@ -22,7 +22,7 @@ const SpiGeneralCfgType SpiGeneralCfg = {
 const SpiExternalDeviceType SpiExternalDeviceCfg[] = {
 	{
 		.spi_hw_unit_id = SPI_EXT_DEV_spi0,
-		.spi_baudrate = 100000, /* bps or Hz */
+		.spi_baudrate = 8000000, /* bps or Hz */
 		.spi_data_shift_edge = SPI_EDGE_LEADING,
 		.spi_shftclk_idle_level = SPI_LEVEL_LOW,
 		.spi_enable_cs = FALSE,
@@ -49,7 +49,7 @@ const struct device *Spi_ZDevs[SPI_EXT_DEV_MAX] = {
 const struct spi_config Spi_ZCfgs[SPI_EXT_DEV_MAX] = {
 	{
 		.operation = (SPI_OP_MODE_MASTER | SPI_WORD_SET(8)),
-		.frequency = 100000,
+		.frequency = 8000000,
 		.cs = {
 			.gpio = NULL, /* Car-OS's Spi driver will use Dio, do-nothing for Zephyr */
 			.delay = 0
